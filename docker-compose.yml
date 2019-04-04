@@ -6,36 +6,12 @@ services:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
     ports:
-      - "15672"
-      - "5672"
+      - "15672:15672"
+      - "5672:5672"
     labels:
       NAME: "rabbitmq"
     volumes:
       - ./rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: hiking_trails_challenge
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: docker
-
-  # api:
-  #   build: .
-  #   command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-  #   volumes:
-  #     - ".:/hiking_trails_challenge"
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - db
-  #   links:
-  #     - db
-  #   environment:
-  #     DB_NAME: hiking_trails_challenge
-  #     DB_USERNAME: docker
-  #     DB_PASSWORD: docker
-  #     DB_HOST: db
 
   web_app:
     build: .
@@ -44,3 +20,5 @@ services:
       - "3001:3001"
     volumes:
       - ".:/hike_vote_app"
+    depends_on:
+      - 'rabbitmq'
